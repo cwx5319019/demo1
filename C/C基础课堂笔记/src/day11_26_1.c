@@ -1,0 +1,171 @@
+
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+void print_data(int* arr,int len){
+	int i = 0;
+	for(i=0;i<len;i++){
+		printf("%d ",arr[i]);
+	}
+	printf("\n");
+}
+
+int find_data(int* arr,int data,int len){
+	int i = 0;
+	for(i=0;i<len;i++){
+		if(arr[i] == data){
+			return i;
+		}
+	}
+	return -1;
+}
+
+// 54
+
+
+/*
+void insert_data(int* arr,int* len){//{1,3,5,7,9}
+	int data = 0;
+	printf("请输入要添加的数据:");
+	scanf("%d",&data);
+	while(getchar()!=10);
+	int res = find_data(arr,data,*len);
+	if(res>=0){
+		printf("该数据已存在\n");
+		return ;
+	}
+	arr[*len] = data;
+	(*len)++;
+}
+*/
+void update_data(int* arr,int len){
+	int data = 0;
+	printf("请输入要修改的数据:");
+	scanf("%d",&data);
+	while(getchar()!=10);
+	int res = find_data(arr,data,len);
+	if(res==-1){
+		printf("查无此数\n");
+		return ;
+	}
+	printf("请输入修改后的数据:");
+	scanf("%d",&data);
+	while(getchar()!=10);
+	arr[res] = data;
+}
+void Remove(int* arr , int* len){
+	int data = 0;
+	printf("请输入要删除的数据:");
+	scanf("%d",&data);
+	while(getchar()!=10);
+	int res = 0;
+	while(1){
+		res = find_data(arr,data,*len);
+		if(res == -1){
+			//printf("差无此数！");
+			return ;
+		}
+
+		for(; res <*len-1;res++){
+			arr[res] = arr[res+1];
+		}
+		//printf("%d\n",res);
+		//printf("%d\n",*len-1);
+		arr[res] = 0;
+		//arr[*len-1] = 0
+		(*len)--;
+	}
+}
+
+//                       l                      
+// 6    1    2   7   9   3     4     5     10    8
+//key                    r
+
+void quick_data(int* arr, int left , int right){
+	if( left >= right ) return;
+
+	int l = left;
+	int r = right;
+	int key = arr[left];
+	int temp = 0;
+	while(l<r){
+		while(l<r){
+			if( arr[r]< key ){
+				break;
+			}
+			r--;
+		}
+		while(l<r){
+			if (arr[l] > key){
+				break;
+			}
+			l++;
+		}
+		temp = arr[l];
+		arr[l] = arr[r];
+		arr[r] = temp;	
+	}
+	temp = arr[left];
+	arr[left] = arr[l] ;
+	arr[l] = temp;
+	quick_data(arr, left , l-1);
+	quick_data(arr, l+1 , right);
+
+}
+
+
+void bublle_data(int* arr,int len){
+	int i = 0 , j = 0,temp = 0;
+	for (j = 0; j< len-1; j++){
+		for(i = 0; i < len-1; i++){
+			if(arr[i] > arr[i+1]){
+				temp = arr[i];
+				arr[i] = arr[i+1];
+				arr[i+1] = temp;
+			}
+		}
+	}
+}
+
+
+void select_data(int* arr , int len){
+	int i = 0,j= 0,temp = 0;
+	int p = 0;
+	for(j = 0; j< len-1; j++){
+		p = j;
+		for(i = j ; i< len; i++){
+			if( arr[p] > arr[i]){
+				p = i;
+			}	
+		}
+		temp = arr[p];
+		arr[p] = arr[j];
+		arr[j] = temp;
+	}
+	return ;
+}
+
+
+
+int main(){
+	int a =10 ;
+	int arr[a] ;
+	int len = 0;
+	int i = 0;
+	srand(time(0));
+	for (i = 0; i< a;i++){
+		arr[i]=rand()%90 +10;
+	}
+	//print_data(arr,len);
+	//update_data(arr,len);
+	//Remove(arr,&len);
+	//select_data(arr , len);
+	//bublle_data(arr,len);
+	quick_data(arr, 0 , a);
+	print_data(arr,a);
+	return 0;
+}
+
+

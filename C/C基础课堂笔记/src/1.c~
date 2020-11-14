@@ -1,0 +1,247 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<termios.h>
+#include<assert.h>
+#include<string.h>
+#include<stdlib.h>
+char getch(){  
+		char c = 0; 
+		struct termios org_opts;
+		struct termios new_opts;
+		int res=0;  
+		res=tcgetattr(STDIN_FILENO,&org_opts);
+		assert(res==0);
+		new_opts = org_opts;
+		new_opts.c_lflag &=~(ICANON | ECHO |ECHOE | ECHOK | ECHONL | ECHOPRT| ECHOKE | ICRNL); 
+		tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
+		
+		
+		c = getchar();
+		sleep(2);  
+		res=tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
+		assert(res==0);  
+		return c;  
+}
+
+int main(){
+	char ch = 0;
+	//while(1){
+		ch = getch();
+		printf("ch = %c\n",ch);
+	//}
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+
+#include<stdio.h>
+#include<user.h>
+int main()
+{
+	printf("请输入：\n");
+	char str[20] = {'\0'};
+	int i = 0;
+	while(1){
+		char ch = getch(); 
+		if(ch == 10){
+			str[i] = 0;
+			break;
+		}else if(ch>= '0' && ch<= '9' || ch>= 'a' &&ch<= 'z'||ch >= 'A'&&ch <='Z'){
+			str[i++] = ch;
+			printf("%c",ch);
+		}else if(ch == 127 ){
+			printf("\b \b");
+			if(i > 0)i--;
+		}
+	}
+	printf("\n");
+	printf("%s\n",str);
+	
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+#include<stdio.h>
+void func(void* a , int n)
+{
+	if( n == 1){
+		printf("%c\n",*(char*)a);
+	}else if(n == 4){
+		printf("%d\n",*(int*)a);
+	}else if(n == 8){
+		printf("%0.2lf\n",*(double*)a);
+	}	
+}
+int main()
+{
+	int a = 10;
+	char ch = 'a';
+	double b = 10.5;
+	func(&a,4);
+	func(&ch,1);
+	func(&b,8);
+	
+	return  0 ;
+}
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+	char str[20] = {};
+	printf("请输入:");
+	char ch = 0;
+	int i = 0,j= 0;
+	int temp = 0;
+	while(1){
+		scanf("%c",&ch);
+		if(ch == 10){
+			break;
+		}else if ( ch>='0' && ch<='9'|| ch=='#'){
+			str[i++] = ch ;
+			strtok (str,"#");
+		}
+	}
+	if(str[0] == '#'){
+		printf("%d\n", atoi(&str[0]));
+	}else{
+		temp = atoi(&str) ;
+		printf("%d\n",temp);
+	}
+	
+	return 0;
+}
+#endif
+#if 0
+#include<stdio.h>
+
+char get_grade(int score){
+	if(score >= 90){
+		return 'A';
+	}else if(score >= 80){
+		return 'B';
+	}else if(score >= 70){
+		return 'C';
+	}else if(score >= 60){
+		return 'D';
+	}else if(score >= 50){
+		return 'E';
+	}else {
+		return 'N';
+	}
+}
+char process(int score,char(*p)(int)){
+	char s = p(score);
+	return s;
+}
+
+
+int main()
+{
+	int score = 0;
+	printf("请输入一个数：");
+	scanf("%d",&score);
+	
+	printf("%c\n",process(score,get_grade));
+	
+
+	return 0;
+}
+
+#endif
+
+
+
+
+
+
+
+#if 0
+#include<stdio.h>
+double func(double num,int n){
+	int i = 0;
+	double sum = 1;
+	for(i = 0; i<n;i++){
+		sum *=num;
+	}
+	return sum;
+}
+double print(double num ,int n,double (*p) (double ,int)){
+	double result = p(num,n);	
+	return result;
+}
+int main()
+{
+	double num = 0;
+	int n = 0;
+	printf("请输入所求数和次方数：");
+	scanf("%lf%d",&num,&n);
+	printf("%0.2lf\n",print(num,n,func));
+	return 0;
+}
+
+#endif

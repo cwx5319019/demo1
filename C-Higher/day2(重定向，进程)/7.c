@@ -1,0 +1,28 @@
+// ps -aux   process status  -all user x
+// 主要关注:    进程号  进程状态  路径
+// su    switch user 切换用户
+// sudo passwd root  更改密码
+// 运行 就绪 阻塞 三者关系   world文档
+// 查看运行树 pstree
+
+#include<stdio.h>
+#include<stdlib.h>s
+#include<unistd.h>
+
+void delay(int time){
+	int i = 0 , j = 0;
+	for(i = 0;i<time;i++){
+		for(j=0;j<0x10000;j++){
+		}
+	}
+
+}
+int main(void){
+	while(1){
+		printf("*");
+		fflush(stdout);
+		delay(5000);
+	}
+	return 0;
+}
+	

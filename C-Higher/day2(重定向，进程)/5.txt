@@ -1,0 +1,4 @@
+newfd = 1
+hello1hello2
+hello3
+

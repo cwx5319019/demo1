@@ -1,0 +1,57 @@
+#ifndef _HEAD_H_
+#define _HEAD_H_
+
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+typedef struct Data{
+	char name[20];
+	char pwd[20];
+	double balance;
+}data_t;
+
+typedef struct User{
+	data_t data;
+	//struct User* prev;
+	struct User* next; 
+}user_t;
+
+//获取字符串
+void getstring(char* str,int len);
+
+//初始化链表，创建头节点 
+user_t* init_user_head();
+
+//增加用户
+void insert_user_node(user_t* head_user);
+
+//登录
+int login(user_t* head);
+
+//输出链表
+void print(user_t* head);
+
+//保存用户名和密码
+void save_user(user_t* head);
+
+//载入用户名和密码
+void load_user(user_t* head);
+
+//释放user的堆空间
+void free_user(user_t* head_user);
+
+#endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>          
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <string.h>
+#include <pthread.h>
+
+int main(int argv ,char** argc)
+{
+	//socket
+	int sockfd =  socket(AF_INET,SOCK_STREAM, 0);
+	printf("sockfd:%d\n",sockfd);
+	if(sockfd == -1){
+		perror("创建失败\n");
+		return -1;
+	}
+	int on = 1;
+	setsockopt(sockfd,SOL_SOCKET,SO_REUSEADDR,&on,sizeof(int));
+	//connect
+	struct sockaddr_in client;
+	memset(&client,0,sizeof(struct sockaddr_in));
+	client.sin_family = AF_INET;
+	client.sin_port = htons(9999);//转化网络字节序（大端字节）
+	client.sin_addr.s_addr = inet_addr("127.0.0.1");//
+	int res = connect(sockfd, (struct sockaddr *)&client,sizeof(struct sockaddr_in));
+	printf("sockfd:%d, %d,%s\n",sockfd,ntohs(client.sin_port),inet_ntoa(client.sin_addr));
+	if(res == -1)
+	{
+		perror("连接失败\n");
+		return -2;
+	}
+	char buf[20] = "";
+	read(sockfd,buf,sizeof(buf));
+	fputs(buf,stdout);
+	memset(buf,0,20);
+	while(1){
+		char buf[20] = "";
+		read(sockfd,buf,sizeof(buf));
+		fputs(buf,stdout);
+		memset(buf,0,20);
+		fgets(buf,sizeof(buf),stdin);
+		write(sockfd,buf,sizeof(buf));
+		memset(buf,0,20);
+	}	
+	return 0;	
+}

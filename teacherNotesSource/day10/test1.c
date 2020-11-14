@@ -1,0 +1,31 @@
+#include<stdio.h>
+#include<unistd.h>
+#include<termios.h>
+#include<assert.h>
+#include<string.h>
+char getch(){  
+		char c = 0; 
+		struct termios org_opts;
+		struct termios new_opts;
+		int res=0;  
+		res=tcgetattr(STDIN_FILENO,&org_opts);
+		assert(res==0);
+		new_opts = org_opts;
+		new_opts.c_lflag &=~(ICANON | ECHO | ECHOE | ECHOK | ECHONL | ECHOPRT | ECHOKE | ICRNL ); 
+		tcsetattr(STDIN_FILENO, TCSANOW, &new_opts);
+		
+		
+		c = getchar();  
+		res=tcsetattr(STDIN_FILENO, TCSANOW, &org_opts);
+		assert(res==0);  
+		return c;  
+}
+
+int main(){
+	char ch = 0;
+	while(1){
+		ch = getch();
+		printf("ch = %c\n",ch);
+	}
+	return 0;
+}

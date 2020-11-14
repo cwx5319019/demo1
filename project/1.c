@@ -1,0 +1,10 @@
+#include<stdio.h>
+
+void freeUser(user_t* userHead){
+	user_t* p=userHead->next;
+	while(p!=userHead){
+		p=p->next;
+		free(p->prev);
+	}
+	free(p);
+}

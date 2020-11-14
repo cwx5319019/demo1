@@ -1,0 +1,202 @@
+#include "userLink.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+//string 得到字符串
+//char *fgets(char *s, int size, FILE *stream);
+
+void mystring(char* name,int len ){
+	fgets(name,len,stdin);
+	int i = 0;
+	for(i = 0;name[i] != 0;i++){
+		if(name[i]== 10){
+			name[i] = 0;
+		}		
+	}
+}
+
+typedef struct Data
+{
+	char name[20];
+	char pwd[20];
+	double balance;
+	
+}data_t;
+
+typedef struct Userlink
+{
+	data_t data;
+	struct Userlink* prev;
+	struct Userlink* next;
+
+}userlink_t;
+
+
+/*
+功能：初始化彩票链表
+返回:链表的头
+*/
+userlink_t* init_userLink()
+{
+	userlink_t* head = (userlink_t*)malloc(sizeof(userlink_t));
+	memset(head,0,sizeof(userlink_t));
+	head->prev = head;
+	head->next = head;
+	return head;
+}
+
+/*
+功能：增加用户节点
+返回：无
+*/
+void addUserlinkNode(userlink_t* head)
+{
+
+	userlink_t* newnode = (userlink_t*)malloc(sizeof(userlink_t));
+	memset(newnode,0,sizeof(userlink_t));
+	
+	//------------填写用户数据区域--------------
+	printf("请输入用户名");
+	char name[20] = {0};
+	mystring(name,20);
+	strcpy(newnode->data.name,name);
+	
+	
+	//----------------------------------------
+	userlink_t* p = head;	
+	while(p->next != head){
+		p = p->next;
+	}
+	p->next = newnode;
+	newnode->next = head;
+	newnode->prev = p;
+	head->prev = newnode;
+}
+
+/*
+功能：遍历数据
+返回:无
+*/
+void showUserlink(userlink_t* head)
+{
+	userlink_t* p = head;	
+	while(p->next != head){
+		printf("%s\n",p->next->data.name);
+		printf("%s\n",p->next->data.pwd);
+		printf("%g\n",p->next->data.balance);
+		p = p->next;
+	}
+}
+
+/*
+功能：用户数据保存
+返回：无
+*/
+void saveUserlink(userlink_t* head)
+{
+	int fp = open("./1.txt",O_RDWR | O_CREAT,0666);
+	//ssize_t write(int fildes, const void *buf, size_t nbyte);
+
+	userlink_t* p = head;	
+	while(p->next != head){
+		write(fp,&(p->next->data),sizeof(data_t));
+		p = p->next;
+	}
+	close(fp);
+	
+}
+
+/*
+功能：用户数据加载
+返回：无
+*/
+void loadUserlink(userlink_t* head)
+{
+	
+	int fp = open("./1.txt",O_RDONLY );
+	
+	if(fp == -1)return;
+	//ssize_t read(int fildes, void *buf, size_t nbyte);
+	data_t temp = {{0}};
+	int res = 0;
+	while(1){	
+		res = read(fp,&temp,sizeof(data_t));
+		sleep(1);
+		if(res == 0) break ;
+		
+		userlink_t* newnode = (userlink_t*)malloc(sizeof(userlink_t));
+		memset(newnode,0,sizeof(userlink_t));
+		
+		newnode->data = temp;
+		
+		userlink_t* p = head;	
+		while(p->next != head){
+			p = p->next;
+		}
+		p->next = newnode;
+		newnode->next = head;
+		newnode->prev = p;
+		head->prev = newnode;
+		
+	}	
+	close(fp);
+
+}
+
+
+/* 
+功能：资源回收
+返回：无
+*/
+void freeUserlink(userlink_t* head)
+{
+	userlink_t* p = head;	
+	userlink_t* q = head;
+	while(p->next != head){
+		q = p;
+		p = p->next;
+		free(q);
+		
+	}
+	free(p);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

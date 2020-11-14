@@ -1,0 +1,79 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<unistd.h>
+
+
+typedef struct Date
+{
+	char name[20];
+	int age;
+}data_t;
+
+typedef struct Human
+{
+	data_t data;
+	struct Human* prev ;
+	struct Human* next ;
+}human_t;
+
+human_t* head_init(){
+	human_t* head = malloc(sizeof(human_t));
+	memset(head,0,sizeof(human_t));
+	head->prev = head;
+	head->next = head;
+	return head;
+}
+
+void create_node(human_t* head){
+		human_t* newnode = malloc(sizeof(human_t));
+		memset(newnode,0,sizeof(human_t));
+		strcpy(newnode->data.name,"zhangsan");
+		newnode->data.age = 13;
+		human_t* p = head->prev;
+		while(p != head){
+			p = p->next;
+		}
+		
+		head->prev = newnode;
+		p->next = newnode;
+		newnode->next = head;
+		newnode->prev = p;
+}
+
+void print(human_t* head){
+	human_t* p = head->prev;
+	while(p != head){
+		printf("name: %s\n",p->data.name);
+		printf("age: %d\n",p->data.age);
+		p = p->next;
+	}
+}
+
+int main(){
+	human_t* head = head_init();
+	create_node(head);
+	print(head);
+
+
+
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

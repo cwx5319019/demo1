@@ -1,0 +1,21 @@
+/home/iotek/XH1908/C高级/day3
+retval = 0
+~
+3.c
+3.c~
+4.c
+4.c~
+5.c
+5.c~
+5.txt
+5.txt~
+6.c
+6.c~
+7.c
+7.c~
+8.c
+8.c~
+9.c
+9.c~
+a.out
+retval = 0

@@ -1,0 +1,52 @@
+
+//-------------------------------信号kill -l  -------------------------------
+//---------SIGKILL(9)杀死进程 SIGCONT(18)继续进程 SIGSTOP(19)停止进程 -----------
+//--------------------------用本程序去控制4.c的运作 --------------------------
+
+#include<stdio.h>
+#include<stdlib.h>
+#include<unistd.h>
+#include<string.h>
+#include<signal.h>
+#include<sys/wait.h>
+
+int main(int argc,char** argv){
+	if(argc < 3){
+		printf("usage:./a.out pid sinnum");
+		exit(1);
+	}
+	kill(atoi(argv[1]),atoi(argv[2]));
+	return 0 ;
+}
+
+#if 0
+int main(void){
+	int pid_1,pid_2;
+	while(1){
+		printf("请输入要操作的程序号：");
+		scanf("%d",&pid_1);
+		while(getchar() != 10);
+		printf("1.停止程序\n");
+		printf("2.继续程序\n");
+		printf("3.杀死程序\n");
+		printf("4.退出\n");
+		printf("请选择：");
+		scanf("%d",&pid_2);
+		while(getchar() != 10);
+		if(pid_2 == 4)break;
+		switch(pid_2){
+			case 1:
+				kill(pid_1,SIGSTOP);
+				break;
+			case 2:
+				kill(pid_1,SIGCONT);
+				break;
+			case 3:
+				kill(pid_1,SIGINT);
+				break;
+		}
+	}
+	return 0;
+}
+
+#end if

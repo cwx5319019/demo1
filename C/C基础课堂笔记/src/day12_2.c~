@@ -1,0 +1,230 @@
+#include<stdio.h>
+#include<string.h>
+#include<user.h>
+
+#if 0
+
+			栈		常量区
+	char str1[20] = "hello"; //左边数组  右边是字符串   所以是字符数组
+		  栈（指针） 	常量区
+	char* str2 = "hello world"; //左边指针  右边字符串(常量区)  所以是字符串  
+	
+	str2[0] = 'H';  //str2等号右边是常量   不可修改 
+			栈	  栈
+	char* str3 = str1  //  str3等号右边是变量 
+	
+	str3[0] = 'H';   //str3等号右边是变量 可以修改
+	
+	
+	字符串遍历方法（主要看条件：str1[i] != '\0'）
+	
+		for(i = 0; str1[i] != '\0';i++){
+			printf("%c",str1[i]);
+		}
+		printf("\n");
+		
+//----------------------------------------------
+
+	user.h 头文件--------sudo cp src/user.h /usr/include  //添加到 /usr/include
+	
+	#ifndef user_h_
+	#define user_h_
+
+	void getstring(char* ,int );
+	#endif
+	
+	
+	转化汇编----------gcc -c src/getstring.c -o getstring.o
+	
+	#include<stdio.h>
+	#include<string.h>
+	void getstring(char* str, int len){
+		fgets(str,len,stdin);
+		int pos = strlen(str);
+		if(str[pos-1] == '\n'){
+			str[pos-1] = 0;
+		}
+	}
+	
+	封装库函数---------ar crv libuser.a getstring.o  //user 是自定义名字
+	添加lib ----------sudo cp libuser.a /usr/lib	
+	
+	使用：
+		#include<user.h>
+		getstring(str,20);
+	注意：编译的时候连接库文件 -luser	
+	
+//-----------------------------------------------------------
+
+		strtok(str,ptr); // 把ptr遍历出来赋值 '\0'
+		
+		字符合法输入
+			关闭标准输入流的缓存，还需要关闭标准输入流的输入显示
+			
+		assert（res == 0） //调试用
+		memcpy(str,ptr,20); //20 字节
+		
+		getch 和 getstring  //见封装函数
+		
+		
+//--------------------合法输入
+		
+		int main(){
+	
+	char ch1[20] = {};
+	char ch = 0;
+	int i = 0;
+	while(1){
+		ch = getch();
+		if(ch == '\n'){
+			printf("\n");
+			ch1[i] = 0;
+			break;
+		}else if( (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||( ch>='0' && ch<= '9')){
+			printf("%c",ch);
+			ch1[i++] = ch;
+		}else if (ch == 127){
+			printf("\b \b");
+			if(i>0){
+				i--;
+			}
+		}
+	}
+	printf("输入的密码为:%s\n",ch1);
+	
+	return 0;
+}
+		
+//----------------------------------------		
+	
+#endif
+/*
+int _strcmp(char* str,char* ptr){	
+	for(i = 0;str1[i] != 0;i++){
+		if(str1[i] != str2[i]){
+			break;
+		}
+	}
+	return str1[i] - str2[i];
+}
+
+*/
+int _strlen(char* str){
+	int counter = 0,i =0;
+	for(i = 0; str[i] != 0;i++){
+		counter++;	
+	}
+	return counter;
+}
+
+char* _strcpy(char* str,char* ptr){
+	int i = 0;
+	for(i = 0;ptr[i] != 0;i++){
+		str[i] = ptr[i];
+	}
+	str[i] = '\0';
+	return str;
+}
+
+
+void _strcat(char* str ,char* ptr){
+	//int len = strlen(str);
+	//strcpy(&str[len],ptr);
+	int i = 0,j = 0;
+	for(i = 0;str[i] != 0;i++);
+	for(j=0;ptr[j] != 0;j++){
+		str[i++] = ptr[j];  //i++ 
+	}
+
+}
+
+
+void getstring(char* str, int len){
+	fgets(str,len,stdin);
+	int pos = strlen(str);
+	if(str[pos-1] == '\n'){
+		str[pos -1] = 0;
+	}
+}
+
+void _strtok(char* str , char* ptr){
+	int i = 0,j=0;
+	for(j = 0;ptr[j] != 0;j++){
+		for(i =0;str[i]!= 0;i++){
+			if(str[i] == ptr[j]){
+				str[i] = '\0';
+			}
+		}
+	}
+}
+//hello
+//oji
+
+#if 0
+int main()
+{
+
+	char str[20] = "hello123";
+	char str2[20] = "hello  ";
+	//int i = 0;
+	
+	//getstring(str1,20);
+	//printf("%s \n",_strcpy(str1,str2));
+	//_strcat(str1,str2);
+	//char ptr[20] = "l";
+	
+	//_strtok(str2," ");  
+	//printf("%s \n",str2);
+	
+	//getstring(str,20);
+	//printf("%s\n", str);
+	
+	return 0
+}
+#endif
+//--------------------合法输入设置密码
+	
+int main(){
+	
+	char ch1[20] = {};
+	char ch = 0;
+	int i = 0;
+	while(1){
+		ch = getch();
+		if(ch == '\n'){
+			printf("\n");
+			ch1[i] = 0;
+			break;
+		}else if( (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') ||( ch>='0' && ch<= '9')){
+			printf("%c",ch);
+			ch1[i++] = ch;
+		}else if (ch == 127){
+			printf("\b \b");
+			if(i>0){
+				i--;
+			}
+		}
+	}
+	printf("输入的密码为:%s\n",ch1);
+	
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

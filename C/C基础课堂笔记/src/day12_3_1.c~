@@ -1,0 +1,167 @@
+#if 0
+	指针偏移
+		指针偏移大小根据数据类型!
+	通用指针 void  (void* 是指针大小字节 是4或者8字节)
+		1.通用指针可以指向任何类型的指针
+		2.ubuntu中通用指针只有 1 字节，所以在取值的时候要强制转换 
+			如void* pa  转化 int* pa 
+			
+	函数传参
+		相同的内容直接写，不同的地方靠传入参数（数据的不同靠传参）
+		
+	代码不同
+		
+		
+	数组指针和指针数组
+	
+	指针常量和常量指针
+		const int* pa 常量指针  不可以通过该指针修改地址对应的值
+		int* const pb 指针常量  该指针一旦初始化完成后，就不能改变指向。 
+	
+	
+#endif
+#if 1
+#include<stdio.h>
+
+int main()
+{
+	int a = 5;
+	int b = 3;
+	const int* pa = &a;
+	int* const pb = &b;
+	
+	pa = &b;
+	
+	printf("%d\n",a);
+	
+
+
+	return 0 ;
+}
+
+#endif
+#if 0
+#include<stdio.h>
+void* func(void* str,int size)
+{
+	int num = 0;
+	printf("请输入下标：");
+	scanf("%d",&num);
+	while(getchar() != 10);
+	return (char*)str+num*size;
+}
+int main()
+{
+	int str[20] = {1,2,3,4,5};
+	char ptr[20] = {'a','d','f','g','h'};
+	char* p[20] = {"海同","中国","上海","1908"};
+	
+	printf("%c\n",*(char*)func(ptr,1));	
+	printf("%d\n",*(int*)func(str,4));
+	printf("%s\n",*(char**)func(p,4));
+
+	return 0;
+}
+
+#endif
+
+#if 0
+#include<stdio.h>
+int main()
+{
+	char* c[4] = {"ENTER","NEW","POINT","RIRST"};
+	char** cp[4] = {c+3,c+2,c+1,c};
+	char*** cpp = cp;
+	
+
+	printf("%s\n",**++cpp);      // 
+/*
+	cpp -> &(c+3)
+	++cpp -> &(c+3)+1  -> &(c+2)
+	*++cpp -> *&(c+2) -> c+2 -> &"POINT"
+	**++cpp -> *&"POINT" -> "POINT"
+	
+	
+	
+*/	
+	printf("%s\n",*--*cpp+++1);	 //
+	printf("%s\n",*cpp[-2]+3);   //
+	printf("%s\n",cpp[-1][-1]+1);//
+	return 0;	
+}
+
+#endif
+#if 0
+//---------------通用指针 void
+
+#include<stdio.h>
+int main()
+{
+	int a = 5;
+	char b = 'x';
+	int* pa = &a;
+	char* pb = &b;
+	void* vpa = &pa;  
+	void* vpb = pb;
+
+	//printf("%d\n",*pa);
+	//printf("%c\n",*pb);
+	
+	printf("%d\n",*vpa);  //直接输出是错的
+	printf("%c\n",*vpb);  //直接输出是错的
+
+	printf("%d\n",*(int*)vpa);   //必须类型转换输出，它的类型就是地址数值的类型指针 
+	printf("%c\n",*(char*)vpb); // 例如：地址类型int*  那它输出转化时指针就得是(int*)*
+
+	//void* vppa = &pa;
+
+	void* vvpa = &vpa;
+	void* vvvpa = &vvpa;	
+	
+	printf("%d\n",*(*(int**)(*(void**)(*(void**)vvvpa))));// **((int**)*(void**)
+	
+	
+	//vvvpa = &vvpa
+	// ***vvvpa
+	
+	
+	//*((int*)***vvvpa)      a
+	//                   a
+
+	return 0;
+}
+
+#endif
+#if 0
+#include<stdio.h>
+int main(){
+
+	int a1[5] = {1,3,5,7,9};
+	int a2[5] = {2,4,6,8,0};
+	int* ar[2] = {a1,a2};
+	
+	int b1[5] = {11,13,15,17,19};
+	int b2[5] = {12,14,16,18,20};
+	int* br[2] = {b1,b2};
+	
+	int** arr[2] = {ar,br};
+	
+	printf("%d\n",***(arr));  
+	printf("%d\n",***(arr) +1);
+	printf("%d\n",*(*(*(arr)+1) +2));
+	printf("%d\n",*(*(*(arr+1)+0) +3));
+	printf("%d\n",*(*(*(arr+1)+1) +4));
+	
+	return 0;
+}
+#endif
+#if 0
+int main(){
+
+	int arr[10] = {1,3,5,7,9,2,4,6,8,0};
+	printf("%d\n", *((int*)( (double*)arr+1 ) + 1));
+	printf("%d\n",*(((int*) (&arr+1)) -1));
+
+	return 0;
+}
+#endif

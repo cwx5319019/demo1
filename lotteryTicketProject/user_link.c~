@@ -1,0 +1,188 @@
+//注释：函数名  返回值  函数功能
+#include"user_link"
+
+void getstring(char* str,int len){
+	fgets(str,len,stdin);
+	int res = strlen(str);
+	if(str[res-1] == 10){
+		str[res-1] = 0;
+	}
+}
+
+//初始化链表，创建头节点 
+user_t* init_user_head(){      
+	user_t* head = malloc(sizeof(user_t));
+	memset(head,0,sizeof(user_t));
+	//head->prev = head;
+	head->next = NULL;
+	//返回头节点
+	return head;  
+	
+}
+
+//增加用户
+void insert_user_node(user_t* head_user){
+	user_t* newnode = malloc(sizeof(user_t));//创建堆
+	memset(newnode,0,sizeof(user_t));
+	while(1){
+		printf("请输入用户名：");
+		char name[20] = {0};
+		getstring(name,20);
+		if(strcmp(name,"admin")!= 0 && strcmp(name,"worker")!=0){
+			strcpy(newnode->data.name,name);
+			break;
+		}else{
+			printf("注册帐号不能和管理员帐号相同\n");
+		}
+	}
+	printf("请设置密码：");
+	getstring(newnode->data.pwd,20);
+	user_t* p = head_user;
+	while(p->next != NULL){
+		p = p->next;
+	}
+	p->next = newnode;
+}
+
+
+//登录
+int login(user_t* head){
+	printf("请输入帐号：");
+	char str[20] = {0};
+	getstring(str,20);
+	if(strcmp(str,"admin") == 0){ //管理员登录
+		printf("请输入密码：");
+		char ptr_1[20] ={0};
+		getstring(ptr_1,20);
+		if(strcmp(ptr_1,"12345")==0){
+			printf("登录成功!\n");
+			return 1;//登录成功返回 1
+		}else{
+			printf("密码错误!\n");
+		}
+	}else if(strcmp(str,"worker") == 0 ){ //公正员登录
+		printf("请输入密码：");
+		char ptr_2[20] ={0};
+		getstring(ptr_2,20);
+		if(strcmp(ptr_2,"12345")==0){
+			printf("登录成功!\n");
+			return 2;//登录成功返回 2
+		}else{
+			printf("密码错误!\n");
+		}
+	}else{  //用户登录
+		user_t* p = head;
+		while(p->next != NULL){
+			if(strcmp(str,p->next->data.name)==0){ //对比帐号
+				printf("请输入密码：");
+				char ptr_3[20] = {0};
+				getstring(ptr_3,20);
+				if(strcmp(ptr_3,p->next->data.pwd)==0){//对比密码
+					printf("登录成功\n");
+					return 3;//登录成功返回 3
+				}
+			}
+			p = p->next;
+		}
+	}
+	return -1;	
+}
+
+void print(user_t* head){
+	user_t* p = head;
+	while(p->next != NULL){
+		printf("%s\n",p->next->data.name);
+		printf("%s\n",p->next->data.pwd);
+		p = p->next;
+	}
+}
+//保存用户名和密码
+void save_user(user_t* head){
+	FILE* fp = fopen("./user.txt","w");
+	user_t* p = head;
+	while(p->next != NULL){
+		fwrite(&(p->next->data),sizeof(data_t),1,fp);
+		p = p->next;	
+	}
+	fclose(fp);
+}
+
+//载入用户名和密码
+void load_user(user_t* head){ 
+	FILE* fp = fopen("./user.txt","r");
+	if(fp ==NULL)return ;
+	int res = 0;
+	user_t* p = head;
+	data_t temp = {{0}};
+	while(1){
+		res = fread(&temp,sizeof(data_t),1,fp);
+		if(res == 0)break;
+		user_t* newuser = malloc(sizeof(user_t));
+		memset(newuser,0,sizeof(user_t));
+		newuser->data = temp;
+		
+		p->next = newuser;
+		newuser -> next = NULL;  //注意尾节点置为NULL
+		p = p->next;
+	}
+	fclose(fp);
+}
+
+//释放user的堆空间
+void free_user(user_t* head_user){
+	user_t* p = head_user;
+	while( p->next != NULL){
+		p = p->next;  //注意释放在后
+		free(p);
+	}
+	free(head_user);
+}
+
+
+int main(){
+	//int len_user = 0;
+	user_t* head_user = init_user_head();
+	load_user(head_user);
+	while(1){
+		printf("欢迎进入中国福利彩票中心\n");
+		printf("1.登录\n");
+		printf("2.注册\n");
+		printf("3.查看\n");
+		printf("0.退出\n");
+		printf("请选择：");
+		int num_1 =0,res = 0;
+		scanf("%d",&num_1);
+		while(getchar() != 10);
+		if(num_1 == 0){
+			save_user(head_user);
+			free_user(head_user);
+			break;
+		}
+		switch(num_1){
+			case 1:
+				res = login(head_user);
+				printf("%d\n",res);
+				break;
+			case 2:
+				insert_user_node(head_user);
+				break;
+			case 3:
+				print(head_user);
+				break;
+			default :
+				printf("输入有误，请重新输入\n");
+				break;
+		}
+	}
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+

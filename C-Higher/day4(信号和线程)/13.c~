@@ -1,0 +1,135 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<malloc.h>
+#include<assert.h>
+#include<pthread.h>
+
+typedef struct{
+	int code;
+	double balance;
+	//互斥锁最好绑定在共享资源这里，
+	pthread_mutex_t mutex;
+}Account;
+
+typedef struct{
+	char name[20];
+	Account *account;
+	double amt;
+
+}OperArg;
+
+Account* create_account(int code,double balance){
+	Account* a = malloc(sizeof(Account));
+	assert(a!= NULL);
+	a->code = code;
+	a->balance = balance;
+	//创建互斥锁
+	pthread_mutex_init(&a->mutex,NULL);
+	return a ;
+
+}
+void destroy_account(Account *a){
+	assert (a != NULL);
+	//销毁互斥锁
+	pthread_mutex_destroy(&a->mutex);
+	free(a);
+
+}
+double withdraw(Account *a ,double amt){
+	assert( a!=NULL);
+	//对共享资源操作的临界区
+	//对共享资源加锁
+	pthread_mutex_lock(&a->mutex);
+	if(amt < 0 || amt > a->balance){
+		//释放互斥锁
+		pthread_mutex_unlock(&a->mutex);
+		return 0.0;
+	}
+	
+	double balance = a->balance;
+	sleep(1);
+	balance -= amt;
+	a->balance = balance;
+	//释放互斥锁
+	pthread_mutex_unlock(&a->mutex);	
+	return amt ;
+}
+double deposit(Account *a ,double amt){
+	assert(a != NULL);
+	//对共享资源操作的临界区
+	//对共享资源加锁
+	pthread_mutex_lock(&a->mutex);
+	if(amt < 0){
+		//释放互斥锁
+		pthread_mutex_unlock(&a->mutex);
+		return 0;
+	}
+	double balance = a->balance;
+	balance += amt ;
+	//释放互斥锁
+	pthread_mutex_unlock(&a->mutex);
+	return amt ;	
+}
+double get_balance(Account *a ){
+	assert( a!= NULL);
+	double balance = a->balance;
+	return balance;
+}
+
+void* withdraw_fn(void* arg){
+	OperArg* oa = (OperArg*)arg;
+	double amt = withdraw(oa->account,oa->amt);
+	printf("%8s(0x%lx) withdraw%f from account%d\n",oa->name,pthread_self(),amt,oa->account->code);
+	return(void*)0;
+
+}
+
+void* deposit_fn(void* arg){
+	OperArg * oa = (OperArg*)arg;
+	double amt = deposit(oa->account,oa->amt);
+	printf("%8s(0x%lx) deposit%f from account%d\n",oa->name,pthread_self(),amt,oa->account->code);
+	return(void*)0;
+
+}
+void* check_fn(void* arg){
+
+	return (void*)0;
+}
+
+int main(){
+	int err;
+	pthread_t boy,girl;
+	Account* a = create_account(100001,10000);
+	OperArg o1,o2;
+	strcpy(o1.name,"boy");
+	o1.account = a;
+	o1.amt = 10000;
+	
+	strcpy(o2.name,"girl");
+	o2.account = a;
+	o2.amt = 10000;
+	
+	//启动两个子线程，同时操作一个银行账户
+	err = pthread_create(&boy,NULL,withdraw_fn,(void*)&o1);
+	if(err != 0){
+		perror("pthread create error");
+	}
+		err = pthread_create(&girl,NULL,withdraw_fn,(void*)&o2);
+	if(err != 0){
+		perror("pthread create error");
+	}
+	pthread_join(boy,NULL);
+	pthread_join(girl,NULL);
+	
+	printf("account balance:%f\n",get_balance(a));
+	destroy_account(a);
+	return 0;
+}
+
+
+
+
+
+
+

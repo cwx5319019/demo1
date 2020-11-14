@@ -1,0 +1,17 @@
+#include<stdio.h>
+
+int main(void){
+	char ch = 0;
+	printf("请输入：");
+	scanf("%c",&ch);
+	while(getchar() != 10);
+	if(ch == 'y'){
+		printf("1\n");
+	}else{
+		printf("2\n");
+	}
+
+	return 0;
+}
+
+
